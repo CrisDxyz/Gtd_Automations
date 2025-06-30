@@ -1,0 +1,57 @@
+# Network Device Migration / Automation Template
+# *Illustrative CLI automation steps only
+
+# === Basic Show Commands ===
+show interfaces summary
+show ip route
+show crypto sessions
+show monitoring statistics
+
+# === Example Pings ===
+ping source LoopbackX DESTINATION_IP
+
+# === Interface Configuration Template ===
+configure terminal
+interface <WAN_INTERFACE>
+ description "Updated interface description"
+ shutdown
+ no shutdown
+exit
+write memory
+
+# === Example Static Route Template ===
+configure terminal
+ip route <INTERFACE> <DESTINATION> <NEXT_HOP>
+exit
+
+# === Example IP SLA Configuration ===
+configure terminal
+ip sla <ID>
+ icmp-echo <DESTINATION>
+  frequency <SECONDS>
+ip sla schedule <ID> life forever start-time now
+exit
+
+# === Example EEM Applet Skeleton ===
+event manager applet <applet_name>
+ event timer watchdog time <seconds>
+ action 1.0 cli command "enable"
+ action 2.0 cli command "show interfaces"
+ action 3.0 regexp "<some_pattern>" "$_cli_result"
+ action 4.0 if $_regexp_result eq "1"
+  action 4.1 cli command "configure terminal"
+  action 4.2 cli command "interface <WAN_INTERFACE>"
+  action 4.3 cli command "shutdown"
+  action 4.4 cli command "no shutdown"
+  action 4.5 cli command "end"
+ action 5.0 end
+!
+
+# === Example Loopback Configuration Skeleton ===
+configure terminal
+interface LoopbackX
+ ip address <IP_ADDRESS> <MASK>
+exit
+write memory
+
+# === END OF TEMPLATE ===
